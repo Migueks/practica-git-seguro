@@ -1,0 +1,29 @@
+
+# Nombre del análisis que aparecerá en GitHub Actions.
+name: Analisis de seguridad con Gitleaks
+
+# Se ejecuta al subir cambios a main o manualmente.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  gitleaks:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Descarga el repositorio con su historial completo.
+      - name: Descargar repositorio
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      # Comprueba si existen posibles secretos expuestos.
+      - name: Ejecutar Gitleaks
+        uses: gitleaks/gitleaks-action@v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
